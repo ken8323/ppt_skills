@@ -175,6 +175,9 @@ def _style_chart(chart, theme, data, unit=None):
     value_axis.format.line.fill.background()
     value_axis.tick_labels.font.size = theme.font_size_caption
     value_axis.tick_labels.font.name = theme.font_body
+    if unit:
+        value_axis.tick_labels.number_format = f'#,##0"{unit}"'
+        value_axis.tick_labels.number_format_is_linked = False
 
     category_axis = chart.category_axis
     category_axis.tick_labels.font.size = theme.font_size_caption
@@ -189,6 +192,7 @@ def _style_chart(chart, theme, data, unit=None):
     data_labels.show_category_name = False
     data_labels.font.size = theme.font_size_caption
     data_labels.font.name = theme.font_body
+    data_labels.number_format = 'General'
     data_labels.number_format_is_linked = False
 
     for i, series in enumerate(chart.series):
