@@ -73,12 +73,14 @@ class ContentLayout:
                 current_top += Inches(0.4 * (len(rows) + 1)) + Inches(0.2)
 
             elif comp_type == "matrix_2x2":
+                matrix_size = Inches(5.0)
+                matrix_left = left + (width - matrix_size) // 2
                 add_matrix_2x2(
                     slide, theme,
                     x_axis=comp.get("x_axis", ""),
                     y_axis=comp.get("y_axis", ""),
                     quadrants=comp.get("quadrants", ["", "", "", ""]),
-                    left=left, top=current_top,
+                    left=matrix_left, top=current_top,
                 )
                 current_top += Inches(5.5)
 
@@ -91,7 +93,9 @@ class ContentLayout:
                 current_top += Inches(2.0)
 
             elif comp_type == "cycle":
-                add_cycle(slide, theme, comp.get("items", []), left, current_top)
+                cycle_size = Inches(5.0)
+                cycle_left = left + (width - cycle_size) // 2
+                add_cycle(slide, theme, comp.get("items", []), cycle_left, current_top)
                 current_top += Inches(5.5)
 
             elif comp_type == "org_chart":
@@ -112,7 +116,7 @@ class ContentLayout:
 
             elif comp_type == "icon_row":
                 add_icon_row(slide, theme, comp.get("items", []), left, current_top, width=width)
-                current_top += Inches(2.0)
+                current_top += Inches(2.8)
 
             elif comp_type == "kpi_cards":
                 cards = comp.get("cards", [])

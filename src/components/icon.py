@@ -34,7 +34,7 @@ ICON_SYMBOLS = {
 def add_icon_with_label(slide, theme, icon_type, label, left, top, size=None, color_idx=0):
     """アイコン+ラベル: 丸/角丸内に幾何学記号+下にテキスト"""
     if size is None:
-        size = Inches(0.8)
+        size = Inches(1.3)
 
     shape_type = ICON_SHAPES.get(icon_type, MSO_SHAPE.OVAL)
     symbol = ICON_SYMBOLS.get(icon_type, "")
@@ -50,19 +50,19 @@ def add_icon_with_label(slide, theme, icon_type, label, left, top, size=None, co
         tf.paragraphs[0].alignment = PP_ALIGN.CENTER
         tf.paragraphs[0].text = symbol
         for run in tf.paragraphs[0].runs:
-            run.font.size = Pt(int(size / Inches(1) * 18))
+            run.font.size = Pt(int(size / Inches(1) * 22))
             run.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
             run.font.bold = True
 
     label_box = slide.shapes.add_textbox(
-        left - Inches(0.3), top + size + Inches(0.1),
-        size + Inches(0.6), Inches(0.4),
+        left - Inches(0.5), top + size + Inches(0.15),
+        size + Inches(1.0), Inches(1.0),
     )
     label_box.text_frame.word_wrap = True
     label_box.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
     label_box.text_frame.paragraphs[0].text = label
     for run in label_box.text_frame.paragraphs[0].runs:
-        run.font.size = theme.font_size_caption
+        run.font.size = theme.font_size_body
         run.font.color.rgb = theme.text_primary
         run.font.name = theme.font_body
 
@@ -123,7 +123,7 @@ def add_icon_row(slide, theme, items, left, top, width=None, icon_size=None):
     if width is None:
         width = theme.content_width
     if icon_size is None:
-        icon_size = Inches(0.8)
+        icon_size = Inches(1.3)
 
     n = len(items)
     spacing = width // n
