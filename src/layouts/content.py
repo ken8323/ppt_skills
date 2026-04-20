@@ -115,7 +115,11 @@ class ContentLayout:
                 current_top += Inches(4.5)
 
             elif comp_type == "icon_row":
-                add_icon_row(slide, theme, comp.get("items", []), left, current_top, width=width)
+                items = comp.get("items", [])
+                cell_width = Inches(2.4)
+                row_width = min(cell_width * len(items), width)
+                row_left = left + (width - row_width) // 2
+                add_icon_row(slide, theme, items, row_left, current_top, width=row_width)
                 current_top += Inches(2.8)
 
             elif comp_type == "kpi_cards":
