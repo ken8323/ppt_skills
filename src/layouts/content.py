@@ -63,8 +63,13 @@ class ContentLayout:
 
             elif comp_type == "callout":
                 text = comp.get("text", "")
-                add_callout(slide, theme, text, left, current_top, width=width)
-                current_top += Inches(1.0)
+                line_count = text.count("\n") + 1
+                callout_height = Inches(0.5 + 0.4 * line_count)
+                add_callout(
+                    slide, theme, text, left, current_top,
+                    width=width, height=callout_height,
+                )
+                current_top += callout_height + Inches(0.2)
 
             elif comp_type == "table":
                 headers = comp.get("headers", [])

@@ -70,14 +70,15 @@ def add_bullets(slide, theme, items, left, top, width=None, height=None):
 
         prefix = "  " * level + "― "
         p.text = prefix + text
-        run = p.runs[0]
-        run.font.size = theme.font_size_body
-        run.font.color.rgb = theme.text_primary
-        run.font.name = theme.font_body
+        for run in p.runs:
+            run.font.size = theme.font_size_body
+            run.font.color.rgb = theme.text_primary
+            run.font.name = theme.font_body
         p.space_after = Pt(6)
 
         if level > 0:
-            run.font.color.rgb = theme.text_secondary
+            for run in p.runs:
+                run.font.color.rgb = theme.text_secondary
             p.level = level
 
 
@@ -86,7 +87,8 @@ def add_callout(slide, theme, text, left, top, width=None, height=None):
     if width is None:
         width = theme.content_width
     if height is None:
-        height = Inches(0.8)
+        line_count = text.count("\n") + 1
+        height = Inches(0.5 + 0.4 * line_count)
 
     shape = slide.shapes.add_shape(
         MSO_SHAPE.ROUNDED_RECTANGLE, left, top, width, height
@@ -108,11 +110,11 @@ def add_callout(slide, theme, text, left, top, width=None, height=None):
     tf.margin_bottom = Inches(0.15)
     tf.word_wrap = True
     tf.paragraphs[0].text = text
-    run = tf.paragraphs[0].runs[0]
-    run.font.size = theme.font_size_body
-    run.font.color.rgb = theme.text_primary
-    run.font.name = theme.font_body
-    run.font.bold = True
+    for run in tf.paragraphs[0].runs:
+        run.font.size = theme.font_size_body
+        run.font.color.rgb = theme.text_primary
+        run.font.name = theme.font_body
+        run.font.bold = True
 
 
 def add_footnote(slide, theme, text, left, bottom_margin=None):
