@@ -64,7 +64,7 @@ class ContentLayout:
             elif comp_type == "callout":
                 text = comp.get("text", "")
                 line_count = text.count("\n") + 1
-                callout_height = Inches(0.5 + 0.4 * line_count)
+                callout_height = Inches(0.3 + 0.3 * line_count)
                 add_callout(
                     slide, theme, text, left, current_top,
                     width=width, height=callout_height,

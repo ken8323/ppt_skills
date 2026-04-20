@@ -88,7 +88,7 @@ def add_callout(slide, theme, text, left, top, width=None, height=None):
         width = theme.content_width
     if height is None:
         line_count = text.count("\n") + 1
-        height = Inches(0.5 + 0.4 * line_count)
+        height = Inches(0.3 + 0.3 * line_count)
 
     shape = slide.shapes.add_shape(
         MSO_SHAPE.ROUNDED_RECTANGLE, left, top, width, height
@@ -106,8 +106,8 @@ def add_callout(slide, theme, text, left, top, width=None, height=None):
 
     tf = shape.text_frame
     tf.margin_left = Inches(0.3)
-    tf.margin_top = Inches(0.15)
-    tf.margin_bottom = Inches(0.15)
+    tf.margin_top = Inches(0.08)
+    tf.margin_bottom = Inches(0.08)
     tf.word_wrap = True
     tf.paragraphs[0].text = text
     for run in tf.paragraphs[0].runs:
