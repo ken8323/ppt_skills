@@ -31,10 +31,13 @@ ICON_SYMBOLS = {
 }
 
 
-def add_icon_with_label(slide, theme, icon_type, label, left, top, size=None, color_idx=0):
-    """アイコン+ラベル: 丸/角丸内に幾何学記号+下にテキスト"""
+def add_icon_with_label(slide, theme, icon_type, label, left, top, size=None, color_idx=0, label_width=None):
+    """アイコン+ラベル: 丸/角丸内に幾何学記号+下にテキスト。
+    label_width を指定するとラベルボックスの幅を明示的に固定できる (default: size + 1.5")。"""
     if size is None:
         size = Inches(1.3)
+    if label_width is None:
+        label_width = size + Inches(1.5)
 
     shape_type = ICON_SHAPES.get(icon_type, MSO_SHAPE.OVAL)
     symbol = ICON_SYMBOLS.get(icon_type, "")
@@ -54,21 +57,36 @@ def add_icon_with_label(slide, theme, icon_type, label, left, top, size=None, co
             run.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
             run.font.bold = True
 
+    label_left = left + (size - label_width) // 2  # ラベル中心をアイコン中心に合わせる
     label_box = slide.shapes.add_textbox(
-        left - Inches(0.5), top + size + Inches(0.15),
-        size + Inches(1.0), Inches(1.0),
+        label_left, top + size + Inches(0.15),
+        label_width, Inches(1.0),
     )
-    label_box.text_frame.word_wrap = True
-    label_box.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
-    label_box.text_frame.paragraphs[0].text = label
-    for run in label_box.text_frame.paragraphs[0].runs:
+    lf = label_box.text_frame
+    lf.margin_left = 0
+    lf.margin_right = 0
+    lf.margin_top = Inches(0.05)
+    lf.word_wrap = True
+    lf.paragraphs[0].alignment = PP_ALIGN.CENTER
+    lf.paragraphs[0].text = label
+    for run in lf.paragraphs[0].runs:
         run.font.size = theme.font_size_body
         run.font.color.rgb = theme.text_primary
         run.font.name = theme.font_body
 
 
-def add_kpi_card(slide, theme, value, unit, label, left, top, width=None, height=None, color_idx=0):
-    """KPI表示: 大きな数字+単位+ラベル、カード型"""
+DELTA_ARROWS = {
+    "up": "▲",
+    "down": "▼",
+    "flat": "–",
+}
+
+
+def add_kpi_card(slide, theme, value, unit, label, left, top, width=None, height=None,
+                 color_idx=0, delta=None, delta_direction=None):
+    """KPI表示: 大きな数字+単位+ラベル、カード型。
+    delta: 前年差分等の文字列 (例 "+12%") 。delta_direction: "up" | "down" | "flat" 。
+    両方指定時のみデルタバッジを表示する。"""
     if width is None:
         width = Inches(3.0)
     if height is None:
@@ -115,10 +133,52 @@ def add_kpi_card(slide, theme, value, unit, label, left, top, width=None, height
     run_label.font.color.rgb = theme.text_secondary
     run_label.font.name = theme.font_body
 
+    if delta and delta_direction:
+        _add_delta_badge(slide, theme, delta, delta_direction, left, top, width)
+
+
+def _add_delta_badge(slide, theme, delta, direction, card_left, card_top, card_width):
+    """KPI カード右上にデルタバッジ (▲ +12%) を配置"""
+    arrow = DELTA_ARROWS.get(direction, "")
+    color_map = {
+        "up": theme.success,
+        "down": theme.danger,
+        "flat": theme.neutral,
+    }
+    badge_color = color_map.get(direction, theme.neutral)
+
+    badge_width = Inches(1.0)
+    badge_height = Inches(0.32)
+    badge_left = card_left + card_width - badge_width - Inches(0.15)
+    badge_top = card_top + Inches(0.15)
+
+    badge = slide.shapes.add_shape(
+        MSO_SHAPE.ROUNDED_RECTANGLE,
+        badge_left, badge_top, badge_width, badge_height,
+    )
+    badge.fill.solid()
+    badge.fill.fore_color.rgb = badge_color
+    badge.line.fill.background()
+
+    tf = badge.text_frame
+    tf.margin_left = Inches(0.05)
+    tf.margin_right = Inches(0.05)
+    tf.margin_top = Inches(0.02)
+    tf.margin_bottom = Inches(0.02)
+    p = tf.paragraphs[0]
+    p.alignment = PP_ALIGN.CENTER
+    p.text = f"{arrow} {delta}" if arrow else delta
+    for run in p.runs:
+        run.font.size = theme.font_size_caption
+        run.font.bold = True
+        run.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+        run.font.name = theme.font_body
+
 
 def add_icon_row(slide, theme, items, left, top, width=None, icon_size=None):
     """アイコン横並び: 3-5個のアイコン+ラベルを等間隔配置
     items: [{"icon": "circle", "label": "項目1"}, ...]
+    ラベルはセル幅いっぱいに広げて、途中での改行 (「フロー」の「ー」落ち等) を防ぐ。
     """
     if width is None:
         width = theme.content_width
@@ -127,6 +187,8 @@ def add_icon_row(slide, theme, items, left, top, width=None, icon_size=None):
 
     n = len(items)
     spacing = width // n
+    # ラベル幅: セル幅の 90% (隣のセルとの視覚的な隙間を残しつつ十分なテキスト幅を確保)
+    label_width = int(spacing * 0.9)
 
     for i, item in enumerate(items):
         icon_left = left + spacing * i + (spacing - icon_size) // 2
@@ -136,4 +198,5 @@ def add_icon_row(slide, theme, items, left, top, width=None, icon_size=None):
             icon_left, top,
             size=icon_size,
             color_idx=i,
+            label_width=label_width,
         )

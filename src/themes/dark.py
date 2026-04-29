@@ -13,6 +13,13 @@ class DarkTheme(Theme):
             hex_to_rgb("#FFFFFF"), hex_to_rgb("#FF6B35"),
             hex_to_rgb("#5BA4E6"), hex_to_rgb("#A0B0C0"),
             hex_to_rgb("#FFD166"), hex_to_rgb("#06D6A0"),
+            hex_to_rgb("#EF476F"), hex_to_rgb("#C084FC"),
+            hex_to_rgb("#FFA69E"), hex_to_rgb("#8EE3EF"),
         ]
+        self.success = hex_to_rgb("#06D6A0")
+        self.warning = hex_to_rgb("#FFD166")
+        self.danger = hex_to_rgb("#EF476F")
+        self.info = hex_to_rgb("#5BA4E6")
+        self.neutral = hex_to_rgb("#A0B0C0")
         self.font_title = "Yu Gothic"
         self.font_body = "Yu Gothic"

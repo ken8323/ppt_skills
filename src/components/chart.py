@@ -1,12 +1,22 @@
-from pptx.util import Inches, Pt
+from pptx.util import Inches, Pt, Emu
 from pptx.chart.data import CategoryChartData
 from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION
+from pptx.enum.shapes import MSO_SHAPE
 from pptx.dml.color import RGBColor
+from pptx.enum.text import PP_ALIGN
+
+from src.components._style import set_paragraph_text
+
+
+# python-pptx チャートのプロット領域推定比率。左 15% は y 軸ラベル+目盛。
+PLOT_AREA_LEFT_RATIO = 0.12
+PLOT_AREA_RIGHT_RATIO = 0.98
+PLOT_AREA_TOP_OFFSET = Inches(0.15)
 
 
 def add_bar_chart(slide, theme, data, left, top, width=None, height=None,
-                   horizontal=False, unit=None):
-    """棒グラフ: 縦/横対応、データラベル付き"""
+                   horizontal=False, unit=None, annotations=None):
+    """棒グラフ: 縦/横対応、データラベル付き、任意で注記オーバーレイ"""
     if width is None:
         width = Inches(8.0)
     if height is None:
@@ -23,9 +33,12 @@ def add_bar_chart(slide, theme, data, left, top, width=None, height=None,
 
     _style_chart(chart, theme, data, unit)
 
+    if annotations and not horizontal:
+        _render_annotations(slide, theme, annotations, data["labels"], left, top, width, height)
 
-def add_line_chart(slide, theme, data, left, top, width=None, height=None, unit=None):
-    """折れ線グラフ: マーカー付き"""
+
+def add_line_chart(slide, theme, data, left, top, width=None, height=None, unit=None, annotations=None):
+    """折れ線グラフ: マーカー付き、任意で注記オーバーレイ"""
     if width is None:
         width = Inches(8.0)
     if height is None:
@@ -46,6 +59,9 @@ def add_line_chart(slide, theme, data, left, top, width=None, height=None, unit=
     for series in chart.series:
         series.smooth = False
         series.format.line.width = Pt(2.5)
+
+    if annotations:
+        _render_annotations(slide, theme, annotations, data["labels"], left, top, width, height)
 
 
 def add_pie_chart(slide, theme, data, left, top, width=None, height=None):
@@ -138,9 +154,9 @@ def add_waterfall(slide, theme, data, left, top, width=None, height=None):
         if i == 0 or i == len(values) - 1:
             point.format.fill.fore_color.rgb = theme.primary
         elif val >= 0:
-            point.format.fill.fore_color.rgb = theme.primary
+            point.format.fill.fore_color.rgb = theme.success
         else:
-            point.format.fill.fore_color.rgb = theme.secondary
+            point.format.fill.fore_color.rgb = theme.danger
 
     chart.has_legend = False
     value_axis = chart.value_axis
@@ -199,3 +215,62 @@ def _style_chart(chart, theme, data, unit=None):
         color_idx = i % len(theme.chart_colors)
         series.format.fill.solid()
         series.format.fill.fore_color.rgb = theme.chart_colors[color_idx]
+
+
+def _render_annotations(slide, theme, annotations, labels, chart_left, chart_top, chart_width, chart_height):
+    """チャート上にピル型の注記を配置。
+    annotations: [{"category": str|int, "text": str, "position": "top"|"bottom"}]
+      - category は labels の要素か 0-based インデックス
+      - position: "top"(デフォ) はチャート上端 / "bottom" は下端付近
+    """
+    plot_left = chart_left + int(chart_width * PLOT_AREA_LEFT_RATIO)
+    plot_right = chart_left + int(chart_width * PLOT_AREA_RIGHT_RATIO)
+    plot_span = plot_right - plot_left
+    n = len(labels)
+
+    pill_width = Inches(1.3)
+    pill_height = Inches(0.32)
+
+    for ann in annotations:
+        cat = ann.get("category")
+        text = ann.get("text", "")
+        position = ann.get("position", "top")
+
+        if isinstance(cat, int):
+            idx = cat
+        else:
+            try:
+                idx = labels.index(cat)
+            except ValueError:
+                continue
+        if idx < 0 or idx >= n:
+            continue
+
+        cat_center_x = plot_left + plot_span * (idx + 0.5) // n
+        pill_left = cat_center_x - pill_width // 2
+        if position == "bottom":
+            pill_top = chart_top + chart_height - Inches(0.9)
+        else:
+            pill_top = chart_top + PLOT_AREA_TOP_OFFSET
+
+        pill = slide.shapes.add_shape(
+            MSO_SHAPE.ROUNDED_RECTANGLE,
+            pill_left, pill_top, pill_width, pill_height,
+        )
+        pill.fill.solid()
+        pill.fill.fore_color.rgb = theme.secondary
+        pill.line.fill.background()
+
+        tf = pill.text_frame
+        tf.margin_left = Inches(0.05)
+        tf.margin_right = Inches(0.05)
+        tf.margin_top = Inches(0.02)
+        tf.margin_bottom = Inches(0.02)
+        tf.word_wrap = True
+        p = tf.paragraphs[0]
+        p.alignment = PP_ALIGN.CENTER
+        set_paragraph_text(
+            p, text,
+            size=theme.font_size_caption, color=RGBColor(0xFF, 0xFF, 0xFF),
+            name=theme.font_body, bold=True,
+        )

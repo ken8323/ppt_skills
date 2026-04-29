@@ -8,6 +8,8 @@ from src.generator import generate_pptx
 
 FULL_DECK_CONFIG = {
     "theme": "monotone",
+    "footer": "株式会社ABC ホールディングス | 社外秘",
+    "brand_name": "ABC コンサルティング",
     "slides": [
         {
             "layout": "cover",
@@ -39,14 +41,18 @@ FULL_DECK_CONFIG = {
             "layout": "content",
             "data": {
                 "title": "3つの戦略的提言",
+                "subtitle": "3年間で業務効率30%改善、5.2億円の累計効果を実現する",
                 "columns": 1,
                 "components": [
                     {
                         "type": "kpi_cards",
                         "cards": [
-                            {"value": "30", "unit": "%", "label": "業務効率改善目標"},
-                            {"value": "5.2", "unit": "億円", "label": "3年間累計効果"},
-                            {"value": "18", "unit": "ヶ月", "label": "投資回収期間"},
+                            {"value": "30", "unit": "%", "label": "業務効率改善目標",
+                             "delta": "+8pt", "delta_direction": "up"},
+                            {"value": "5.2", "unit": "億円", "label": "3年間累計効果",
+                             "delta": "+1.2億", "delta_direction": "up"},
+                            {"value": "18", "unit": "ヶ月", "label": "投資回収期間",
+                             "delta": "-6ヶ月", "delta_direction": "down"},
                         ],
                     },
                     {
@@ -64,6 +70,7 @@ FULL_DECK_CONFIG = {
             "layout": "chart_page",
             "data": {
                 "title": "業績推移と競合比較",
+                "subtitle": "自社は年率7%成長だが競合は15-20%で市場シェアが縮小",
                 "chart": {
                     "type": "bar",
                     "unit": "億円",
@@ -75,6 +82,9 @@ FULL_DECK_CONFIG = {
                             {"name": "競合B", "values": [110, 125, 150, 175, 205]},
                         ],
                     },
+                    "annotations": [
+                        {"category": "2025", "text": "競合比▲55%"},
+                    ],
                 },
                 "key_points": [
                     "自社は年率約7%の成長",
@@ -82,6 +92,7 @@ FULL_DECK_CONFIG = {
                     "市場シェアは縮小傾向",
                     "差別化戦略の再定義が急務",
                 ],
+                "source": "各社有価証券報告書 (2021-2025年) を基に作成",
             },
         },
         {
@@ -261,6 +272,7 @@ FULL_DECK_CONFIG = {
             "layout": "chart_page",
             "data": {
                 "title": "投資効果の累計推移",
+                "subtitle": "初期投資17億を18ヶ月で回収、3年累計52億の効果",
                 "chart": {
                     "type": "waterfall",
                     "data": {
@@ -273,6 +285,7 @@ FULL_DECK_CONFIG = {
                     "3年累計で5.2億円の効果",
                     "ROI 188%を達成",
                 ],
+                "source": "社内試算モデル (※サンプル値)",
             },
         },
         {
@@ -286,6 +299,71 @@ FULL_DECK_CONFIG = {
                         "values": [45, 25, 20, 10],
                     },
                 },
+            },
+        },
+        {
+            "layout": "content",
+            "data": {
+                "title": "DX推進の3本柱 (pillars)",
+                "columns": 1,
+                "components": [{
+                    "type": "pillars",
+                    "items": [
+                        {"title": "基盤整備", "body": "データ統合\nシステム刷新", "kpi": "180M円"},
+                        {"title": "業務変革", "body": "RPA導入\nプロセス自動化", "kpi": "180M円"},
+                        {"title": "価値創造", "body": "AI活用\n新規事業開発", "kpi": "140M円"},
+                    ],
+                }],
+            },
+        },
+        {
+            "layout": "content",
+            "data": {
+                "title": "SWOT分析",
+                "columns": 1,
+                "components": [{
+                    "type": "swot",
+                    "cells": [
+                        {"title": "強み", "items": ["ブランド力", "技術蓄積", "顧客基盤"]},
+                        {"title": "弱み", "items": ["コスト構造の硬直化", "デジタル人材不足"]},
+                        {"title": "機会", "items": ["AI普及", "規制緩和", "市場拡大"]},
+                        {"title": "脅威", "items": ["競合参入加速", "景気悪化リスク"]},
+                    ],
+                }],
+            },
+        },
+        {
+            "layout": "content",
+            "data": {
+                "title": "競合ベンチマーク比較",
+                "columns": 1,
+                "components": [{
+                    "type": "benchmark_bar",
+                    "unit": "%",
+                    "items": [
+                        {"label": "自社", "value": 72, "is_self": True},
+                        {"label": "競合A", "value": 88},
+                        {"label": "競合B", "value": 81},
+                        {"label": "業界平均", "value": 76},
+                    ],
+                }],
+            },
+        },
+        {
+            "layout": "content",
+            "data": {
+                "title": "優先度×インパクト マトリクス",
+                "columns": 1,
+                "components": [{
+                    "type": "heatmap",
+                    "col_headers": ["コスト削減", "売上拡大", "顧客体験", "リスク低減"],
+                    "row_headers": ["データ基盤", "業務自動化", "AI活用"],
+                    "values": [
+                        [90, 60, 70, 80],
+                        [80, 50, 85, 60],
+                        [50, 95, 90, 40],
+                    ],
+                }],
             },
         },
         {

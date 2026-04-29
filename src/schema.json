@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PPT Skill Config",
+  "type": "object",
+  "required": ["theme", "slides"],
+  "additionalProperties": false,
+  "properties": {
+    "theme": { "type": "string", "enum": ["monotone", "dark", "colorful"] },
+    "footer": { "type": "string" },
+    "brand_name": { "type": "string" },
+    "slides": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/slide" }
+    }
+  },
+  "definitions": {
+    "slide": {
+      "type": "object",
+      "required": ["layout", "data"],
+      "additionalProperties": false,
+      "properties": {
+        "layout": {
+          "type": "string",
+          "enum": ["cover", "section_divider", "agenda", "content", "chart_page", "comparison", "closing"]
+        },
+        "data": { "type": "object" }
+      }
+    },
+    "component": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "bullets", "callout", "table", "matrix_2x2", "pyramid",
+            "process_flow", "cycle", "org_chart", "timeline", "gantt",
+            "icon_row", "kpi_cards", "pillars", "swot", "heatmap", "benchmark_bar"
+          ]
+        }
+      }
+    },
+    "chart": {
+      "type": "object",
+      "required": ["type", "data"],
+      "properties": {
+        "type": { "type": "string", "enum": ["bar", "line", "pie", "waterfall"] },
+        "unit": { "type": "string" },
+        "annotations": { "type": "array" },
+        "data": { "type": "object" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "enum": ["bar", "line"] } } },
+          "then": {
+            "properties": {
+              "data": {
+                "type": "object",
+                "required": ["labels", "series"],
+                "properties": {
+                  "labels": { "type": "array", "minItems": 1 },
+                  "series": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "required": ["name", "values"],
+                      "properties": {
+                        "name": { "type": "string" },
+                        "values": { "type": "array", "items": { "type": "number" } }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "enum": ["pie", "waterfall"] } } },
+          "then": {
+            "properties": {
+              "data": {
+                "type": "object",
+                "required": ["labels", "values"],
+                "not": { "required": ["series"] },
+                "properties": {
+                  "labels": { "type": "array", "minItems": 1 },
+                  "values": { "type": "array", "items": { "type": "number" }, "minItems": 1 }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

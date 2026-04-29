@@ -10,15 +10,18 @@ class ComparisonLayout:
     def render(self, slide, theme, data):
         """比較ページ: 左右2分割、中央に区切り線"""
         title = data.get("title", "")
+        subtitle = data.get("subtitle")
         left_title = data.get("left_title", "")
         right_title = data.get("right_title", "")
         left_components = data.get("left_components", [])
         right_components = data.get("right_components", [])
 
         if title:
-            add_title(slide, theme, title, theme.margin_left, theme.margin_top)
+            add_title(slide, theme, title, theme.margin_left, theme.margin_top, subtitle=subtitle)
 
         content_top = theme.content_area_top
+        if subtitle:
+            content_top += Inches(0.35)
         half_width = (theme.content_width - Inches(0.6)) // 2
 
         if left_title:
@@ -47,8 +50,10 @@ class ComparisonLayout:
                 run.font.name = theme.font_title
 
         divider_x = theme.margin_left + half_width + Inches(0.25)
+        divider_bottom = theme.slide_height - theme.margin_bottom - Inches(0.1)
+        divider_height = divider_bottom - content_top
         divider = slide.shapes.add_shape(
-            MSO_SHAPE.RECTANGLE, divider_x, content_top, Pt(2), theme.content_height,
+            MSO_SHAPE.RECTANGLE, divider_x, content_top, Pt(2), divider_height,
         )
         divider.fill.solid()
         divider.fill.fore_color.rgb = theme.border

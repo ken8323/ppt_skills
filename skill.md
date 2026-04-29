@@ -41,9 +41,14 @@ description: Use when the user asks to create a PowerPoint / pptx / スライド
 - **アクションタイトル** (結論を述べる形にする):
   - ○「売上は3年で2.2倍に成長」「レガシー刷新が最優先課題」
   - ×「売上推移」「課題一覧」
+- **サブヘッド推奨**: アクションタイトルの 1 行下に、タイトルの根拠や数値補足を `subtitle` で添える (content/chart_page/comparison で対応)。例「CAGR 48% を牽引したのは北米市場」
 - **図解ファースト**: 3項目以上の概念・関係性・時系列・手順は**必ず図解コンポーネントを優先**する。箇条書き (`bullets`) は図解で表現できない補足説明や例示に限定する。全スライドの**過半数に図解・チャート・表のいずれかを含める**ことを目安にする
+- **数値スライドには出典を明記**: `chart_page` では `source` フィールドに出典 (社内データ/調査機関名/年度) を必ず入れる。推計・サンプル値は「(※サンプル値)」と明示
+- **KPI は前年差分を添える**: `kpi_cards` では可能な限り `delta` + `delta_direction` (up/down/flat) で差分バッジを付ける。読み手の「良いのか悪いのか」判断を助ける
+- **チャート注記で結論を刺す**: `bar` / `line` の `annotations` に `{"category": "2025", "text": "最高値 +48%"}` 等を入れて、着目ポイントに注釈ピルを重ねる
 - **箇条書きは3-5項目、各1-2行以内** (使う場合のみ)
 - **絵文字は一切使わない**
+- **ページ番号とフッターは自動注入** (cover / section_divider / thank_you を除く)。トップレベル `footer` / `brand_name` で一括設定
 - データが不明な場合はサンプル値を入れ「※サンプル値」と注記
 
 **図解選定ガイド** (内容パターン → 使うコンポーネント):
@@ -63,6 +68,10 @@ description: Use when the user asks to create a PowerPoint / pptx / スライド
 | 数値の推移・比較 | `chart_page` (bar/line/pie/waterfall) |
 | 構造化されたデータ | `table` |
 | 強調したい一文 | `callout` |
+| 戦略テーマ・3本柱 | `pillars` |
+| SWOT/3C/4P等フレームワーク | `swot` |
+| 優先度×影響度マッピング | `heatmap` |
+| 自社vs競合ベンチマーク | `benchmark_bar` |
 
 **スライド枚数の目安**: 10-25枚。短い報告なら10枚、戦略提案なら20-25枚。Claudeが内容から判断する。
 
@@ -93,55 +102,79 @@ print(f"生成完了: {output_path}")
 ```json
 {
   "theme": "monotone" | "dark" | "colorful",
+  "footer": "株式会社ABC | 社外秘",       // 任意。各ページ左下に表示
+  "brand_name": "ABC Consulting",          // 任意。footer 未指定時のフォールバック
   "slides": [ { "layout": "...", "data": { ... } }, ... ]
 }
 ```
 
-各スライドは `{"layout": "<レイアウト名>", "data": {<レイアウト固有データ>}}` の形。
+各スライドは `{"layout": "<レイアウト名>", "data": {<レイアウト固有データ>}}` の形。ページ番号は各スライド右下に自動挿入される (cover/section_divider/thank_you を除く)。
 
 ### レイアウト一覧
 
 | layout | 用途 | data キー |
 |---|---|---|
-| `cover` | 表紙 | `title`, `subtitle`, `client`, `date` |
+| `cover` | 表紙 (左 primary パネル + 右タイトル) | `title`, `subtitle`, `client`, `date` ※トップレベル `brand_name` はパネル上部に白文字で自動表示 |
 | `section_divider` | 章区切り | `section_number`, `section_title` |
 | `agenda` | アジェンダ | `items: list[str]`, `highlight: int?` |
-| `content` | 汎用コンテンツ | `title`, `columns: 1|2|3`, `components: list[Component]` |
-| `chart_page` | チャート主体 | `title`, `chart: Chart`, `key_points: list[str]?` |
-| `comparison` | 左右比較 | `title`, `left_title`, `left_components`, `right_title`, `right_components` |
+| `content` | 汎用コンテンツ | `title`, `subtitle?`, `columns: 1|2|3`, `components: list[Component]` |
+| `chart_page` | チャート主体 | `title`, `subtitle?`, `chart: Chart`, `key_points: list[str]?`, `source: str?` |
+| `comparison` | 左右比較 | `title`, `subtitle?`, `left_title`, `left_components`, `right_title`, `right_components` |
 | `closing` | まとめ/お礼 | `summary: list[str]`, `next_steps: list[str]` または `type: "thank_you"`, `contact` |
+
+**共通の任意フィールド**:
+- `subtitle`: アクションタイトル直下に配置される 1 行サブヘッド。content/chart_page/comparison で対応
 
 ### コンポーネント (contentレイアウト `components` 内)
 
-| type | 用途 | 必須パラメータ |
-|---|---|---|
-| `bullets` | 箇条書き | `items: list[str]` |
-| `callout` | 強調ボックス | `text: str` |
-| `table` | 表 | `headers: list[str]`, `rows: list[list[str]]` |
-| `matrix_2x2` | 2x2マトリクス | `x_axis`, `y_axis`, `quadrants: list[4]` |
-| `pyramid` | ピラミッド | `levels: list[str]` (上から順) |
-| `process_flow` | プロセスフロー | `steps: list[str]` |
-| `cycle` | サイクル図 | `items: list[str]` |
-| `org_chart` | 組織図 | `data: {name, children: [{name, children}]}` |
-| `timeline` | タイムライン | `milestones: [{date, label}]` |
-| `gantt` | ガント | `tasks: [{name, start, duration}]`, `phases: list[str]` |
-| `icon_row` | アイコン行 | `items: [{icon, label}]` |
-| `kpi_cards` | KPIカード | `cards: [{value, unit, label}]` |
+| type | 用途 | 必須パラメータ | 任意パラメータ |
+|---|---|---|---|
+| `bullets` | 箇条書き | `items: list[str]` | — |
+| `callout` | 左アクセントバー付き強調ボックス | `text: str` | `variant: "info"\|"success"\|"warning"\|"danger"`（バーと背景色に反映。デフォルトは `info` = primary色） |
+| `table` | 表 | `headers: list[str]`, `rows: list[list[str]]` | `highlight_rows: list[int]`（0始まり行インデックス）, `highlight_cells: [{row, col}]` |
+| `matrix_2x2` | 2x2マトリクス | `x_axis`, `y_axis`, `quadrants: list[4]` | `recommended_quadrant: 0-3`（太枠強調。0=左上, 1=右上, 2=左下, 3=右下） |
+| `pyramid` | ピラミッド | `levels: list[str\|{text,note}]` (上から順) | 各 level を `{"text": "...", "note": "右注釈"}` 形式にすると右側に注釈を表示 |
+| `process_flow` | プロセスフロー | `steps: list[str]` | `style: "arrow"(デフォ)\|"chevron"` |
+| `cycle` | サイクル図 | `items: list[str]` | — |
+| `org_chart` | 組織図 | `data: {name, children: [{name, children}]}` | — |
+| `timeline` | タイムライン | `milestones: [{date, label}]` | `today: str`（日付文字列。マイルストーンと同じ形式で指定すると「現在」マーカーを表示） |
+| `gantt` | ガント | `tasks: [{name, start, duration}]`, `phases: list[str]` | 各 task に `progress: 0.0-1.0`（完了比率バーを濃色で表示） |
+| `icon_row` | アイコン行 | `items: [{icon, label}]` | — |
+| `kpi_cards` | KPIカード | `cards: [{value, unit, label}]` | 各 card に `delta: str`, `delta_direction: "up"\|"down"\|"flat"` |
+| `pillars` | 縦柱（3-5本） | `items: [{title, body}]` | 各 item に `kpi: str`（大きな数値を柱下部に表示） |
+| `swot` | SWOTフレームワーク | `cells: [{title, items: list[str]}]`（左上/右上/左下/右下の順） | — |
+| `heatmap` | ヒートマップ | `col_headers: list[str]`, `row_headers: list[str]`, `values: list[list[float]]` | — |
+| `benchmark_bar` | 横棒ベンチマーク | `items: [{label, value}]` | `unit: str?`、各 item に `is_self: true` で自社を primary 色で強調 |
 
 ### チャート (chart_page `chart` 内)
 
 | type | dataフォーマット | 追加オプション |
 |---|---|---|
-| `bar` | `{labels, series: [{name, values}]}` | `unit` |
-| `line` | `{labels, series: [{name, values}]}` | `unit` |
+| `bar` | `{labels, series: [{name, values}]}` | `unit: str?`, `annotations: list?` |
+| `line` | `{labels, series: [{name, values}]}` | `unit: str?`, `annotations: list?` |
 | `pie` | `{labels, values}` | — |
-| `waterfall` | `{labels, values}` (符号で増減) | — |
+| `waterfall` | `{labels, values}` (符号で増減) | — ※正値は緑(success)、負値は赤(danger)、先頭・末尾のバーは primary で自動着色 |
+
+**annotations フォーマット** (bar/line のみ):
+
+```json
+[
+  {"category": "2025", "text": "最高値 +48%"},
+  {"category": 3, "text": "ROI 達成", "position": "bottom"}
+]
+```
+
+- `category`: 該当ラベル文字列または 0 始まりのインデックス
+- `text`: 注記ピルに表示する文字列 (短く)
+- `position`: `"top"` (デフォ) または `"bottom"`
 
 ## 最小構成例
 
 ```json
 {
   "theme": "monotone",
+  "footer": "株式会社ABC | 社外秘",
+  "brand_name": "ABC Consulting",
   "slides": [
     {
       "layout": "cover",
@@ -164,9 +197,18 @@ print(f"生成完了: {output_path}")
       "layout": "content",
       "data": {
         "title": "売上は3年で2.2倍に成長",
+        "subtitle": "北米市場の拡大が牽引、CAGR 48% を達成",
         "columns": 1,
         "components": [
-          {"type": "bullets", "items": ["2023年: 100億円", "2024年: 150億円", "2025年: 220億円"]},
+          {
+            "type": "kpi_cards",
+            "cards": [
+              {"value": "220", "unit": "億円", "label": "2025年売上",
+               "delta": "+47%", "delta_direction": "up"},
+              {"value": "48", "unit": "%", "label": "3年 CAGR",
+               "delta": "+12pt", "delta_direction": "up"}
+            ]
+          },
           {"type": "callout", "text": "CAGR 48%の高成長を実現"}
         ]
       }
@@ -175,15 +217,20 @@ print(f"生成完了: {output_path}")
       "layout": "chart_page",
       "data": {
         "title": "市場規模は年平均15%で拡大",
+        "subtitle": "2025年に 200 億円を突破、競合参入も加速",
         "chart": {
           "type": "bar",
           "unit": "億円",
           "data": {
             "labels": ["2023", "2024", "2025"],
             "series": [{"name": "市場規模", "values": [100, 150, 220]}]
-          }
+          },
+          "annotations": [
+            {"category": "2025", "text": "200億円突破"}
+          ]
         },
-        "key_points": ["CAGR 15%で成長", "2025年に200億円突破"]
+        "key_points": ["CAGR 15%で成長", "2025年に200億円突破"],
+        "source": "経済産業省調査 (2025年3月)"
       }
     },
     {
@@ -201,10 +248,13 @@ print(f"生成完了: {output_path}")
 
 - **pieとwaterfall** の `data` は `{labels, values}` フラット形式。`series` を使わない
 - **bar/line** の `data` は `{labels, series: [{name, values}]}` のネスト形式
+- **annotations** は `bar` / `line` でのみ有効。`pie` / `waterfall` には指定しない
+- **delta は delta_direction とセット**: 片方のみだとバッジが出ない
 - **org_chart** の `data` は再帰的な `{name, children: [...]}` 構造
 - **gantt** の `start` と `duration` は月数などの整数。`phases` の長さで横軸を決める
 - **matrix_2x2** の `quadrants` は左上/右上/左下/右下の順で4要素
 - **pyramid** の `levels` は上 (狭い) から下 (広い) の順
+- **waterfall** のバー配色は自動（正値=緑、負値=赤、先頭末尾=primary）。JSONでの指定不要
 - 実行ファイルが存在しない環境では `pip install -r requirements.txt` を事前実行
 
 ## 実装参照
@@ -213,4 +263,4 @@ print(f"生成完了: {output_path}")
 - レイアウト: `src/layouts/`
 - コンポーネント: `src/components/`
 - テーマ: `src/themes/`
-- 動作例 (全機能を網羅した21枚のサンプル): `tests/test_e2e.py` の `FULL_DECK_CONFIG`
+- 動作例 (全機能を網羅した26枚のサンプル): `tests/test_e2e.py` の `FULL_DECK_CONFIG`
