@@ -12,6 +12,7 @@ from src.components.chart import (
     add_combo_chart,
 )
 from src.components._style import set_paragraph_text
+from src.components.source_note import SOURCE_NOTE_HEIGHT, SOURCE_NOTE_GAP
 
 
 CHART_FUNCTIONS = {
@@ -62,7 +63,7 @@ class ChartPageLayout:
             if chart_data.get("y_label"):
                 extra_kwargs["y_label"] = chart_data["y_label"]
 
-        source_reserve = Inches(0.35) if source else 0
+        source_reserve = (SOURCE_NOTE_HEIGHT + SOURCE_NOTE_GAP) if source else 0
         available_height = theme.content_height - source_reserve
         if subtitle:
             available_height -= Inches(0.35)
@@ -91,16 +92,5 @@ class ChartPageLayout:
                 **extra_kwargs,
             )
 
-        if source:
-            source_top = content_top + available_height + Inches(0.05)
-            src_box = slide.shapes.add_textbox(
-                theme.margin_left, source_top,
-                theme.content_width, Inches(0.3),
-            )
-            src_tf = src_box.text_frame
-            src_tf.word_wrap = True
-            set_paragraph_text(
-                src_tf.paragraphs[0], f"出典: {source}",
-                size=theme.font_size_footnote, color=theme.text_secondary,
-                name=theme.font_body, italic=True,
-            )
+        # source の描画は generator が render_source_note で全レイアウト共通に行う
+        # chart_page は available_height を縮めて余地だけ確保している

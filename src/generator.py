@@ -4,6 +4,7 @@ from pptx.util import Inches
 from src.themes import get_theme
 from src.layouts import get_layout
 from src.components.footer import add_page_footer
+from src.components.source_note import render_source_note, has_source
 from src.validator import validate_config
 from src.linter import lint_config
 
@@ -12,6 +13,9 @@ BLANK_LAYOUT_INDEX = 6
 
 # フッターを付与しないレイアウト (背景塗りつぶし系)
 FOOTER_SKIP_LAYOUTS = {"cover", "section_divider"}
+
+# source 注記をスキップするレイアウト (背景塗りつぶし系・トップ表紙等)
+SOURCE_SKIP_LAYOUTS = {"cover", "section_divider"}
 
 
 def _should_skip_footer(layout_name: str, data: dict) -> bool:
@@ -89,6 +93,9 @@ def generate_pptx(
         slide = prs.slides.add_slide(blank_layout)
         layout = get_layout(layout_name)
         layout.render(slide, theme, data)
+
+        if layout_name not in SOURCE_SKIP_LAYOUTS and has_source(data):
+            render_source_note(slide, theme, data)
 
         if not _should_skip_footer(layout_name, data):
             add_page_footer(slide, theme, idx, total, footer_text=footer_text)

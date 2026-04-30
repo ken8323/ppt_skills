@@ -41,6 +41,8 @@ def _validate_business_rules(config: dict) -> None:
         data = slide.get("data", {})
         layout = slide.get("layout", "")
 
+        _validate_sources(data, f"slides[{i}]")
+
         if layout == "chart_page":
             chart = data.get("chart", {})
             _validate_chart(chart, f"slides[{i}].data.chart")
@@ -51,6 +53,38 @@ def _validate_business_rules(config: dict) -> None:
         for key in ("left_components", "right_components"):
             for j, comp in enumerate(data.get(key, [])):
                 _validate_component(comp, f"slides[{i}].data.{key}[{j}]")
+
+
+def _validate_sources(data: dict, path: str) -> None:
+    """source / sources の整合性チェック。"""
+    has_source = bool(data.get("source"))
+    sources = data.get("sources")
+    has_sources = sources is not None
+    if has_source and has_sources:
+        raise ConfigValidationError(
+            f"[{path}] source と sources は同時指定できません。どちらか一方を使ってください。"
+        )
+    if has_source and not isinstance(data["source"], str):
+        raise ConfigValidationError(
+            f"[{path}.source] string 型で指定してください。"
+        )
+    if has_sources:
+        if not isinstance(sources, list):
+            raise ConfigValidationError(
+                f"[{path}.sources] list 型で指定してください (要素は string または {{label, url}})。"
+            )
+        for k, s in enumerate(sources):
+            if isinstance(s, str):
+                continue
+            if isinstance(s, dict):
+                if "label" not in s and "url" not in s:
+                    raise ConfigValidationError(
+                        f"[{path}.sources[{k}]] label または url のいずれかが必要です。"
+                    )
+                continue
+            raise ConfigValidationError(
+                f"[{path}.sources[{k}]] string または {{label, url}} で指定してください。"
+            )
 
 
 def _validate_chart(chart: dict, path: str) -> None:

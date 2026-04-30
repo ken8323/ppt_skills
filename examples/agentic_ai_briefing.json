@@ -58,6 +58,10 @@
         "title": "三大プレイヤーが推論能力を一段押し上げ",
         "subtitle": "2026年Q1-Q2にかけて主要モデルが相次ぎ世代交代",
         "columns": 1,
+        "sources": [
+          {"label": "Google Blog「Gemini 3 による知性の新時代」"},
+          {"label": "Anthropic「Introducing Claude 4」"}
+        ],
         "components": [
           {
             "type": "table",
@@ -67,8 +71,7 @@
               ["Google", "Gemini 3.1 Pro", "2026年Q1", "ARC-AGI-2で前世代比2.5倍、Workspace深統合で先回り助手化"],
               ["Anthropic", "Claude 4.7 Opus / Mythos", "2026年Q1-Q2", "コーディング世界最高評価、Googleから最大400億ドル出資"]
             ]
-          },
-          {"type": "bullets", "items": ["出典: Google Blog「Gemini 3 による知性の新時代」/ Anthropic「Introducing Claude 4」"]}
+          }
         ]
       }
     },
@@ -140,6 +143,7 @@
         "title": "大企業が「全社展開」フェーズに突入",
         "subtitle": "PoCを越え、業務基幹プロセスへの組込が進行",
         "columns": 1,
+        "sources": ["cloud.watch.impress.co.jp", "ai-literacy.jp", "intel.co.jp", "uravation.com"],
         "components": [
           {
             "type": "table",
@@ -151,8 +155,7 @@
               ["イオンリテール", "Gemini Extract Systemで商品情報登録", "4,500人時/年 → 450人時/年（90%削減）"]
             ],
             "highlight_rows": [0, 3]
-          },
-          {"type": "bullets", "items": ["出典: cloud.watch.impress.co.jp / ai-literacy.jp / intel.co.jp / uravation.com"]}
+          }
         ]
       }
     },

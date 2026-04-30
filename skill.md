@@ -127,8 +127,11 @@ print(f"生成完了: {output_path}")
 | `comparison` | 左右比較 | `title`, `subtitle?`, `left_title`, `left_components`, `right_title`, `right_components` |
 | `closing` | まとめ/お礼 | `summary: list[str]`, `next_steps: list[str]` または `type: "thank_you"`, `contact` |
 
-**共通の任意フィールド**:
+**共通の任意フィールド** (cover/section_divider 以外の全レイアウトで使用可):
 - `subtitle`: アクションタイトル直下に配置される 1 行サブヘッド。content/chart_page/comparison で対応
+- `source: str`: 「出典: ...」としてフッター上端に italic で小さく描画。例: `"経済産業省 2025年3月"`
+- `sources: list`: 複数出典を `/` 区切りで結合して描画。要素は `string` または `{label, url}`。例: `[{"label": "Gartner", "url": "https://..."}, "社内データ"]`
+- 数値・事例スライドには可能な限り出典を明記。`source` と `sources` の同時指定は不可
 
 ### コンポーネント (contentレイアウト `components` 内)
 

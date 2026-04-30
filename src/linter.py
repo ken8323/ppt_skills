@@ -46,9 +46,9 @@ def _lint_slide(layout: str, data: dict, path: str, warnings: list[str]) -> None
             f"{path}.subtitle 文字数 {len(subtitle)} 文字 (推奨 {SUBTITLE_MAX} 文字以内)。"
         )
 
-    if layout == "chart_page" and not data.get("source"):
+    if layout == "chart_page" and not data.get("source") and not data.get("sources"):
         warnings.append(
-            f"{path} に source が未指定。数値スライドには出典の明記を推奨 "
+            f"{path} に source/sources が未指定。数値スライドには出典の明記を推奨 "
             "(社内データ/調査機関名/年度。推計値は『※サンプル値』)。"
         )
 
