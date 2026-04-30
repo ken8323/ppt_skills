@@ -34,6 +34,27 @@ description: Use when the user asks to create a PowerPoint / pptx / スライド
 
 スライド構成をMarkdownで提示し、ユーザーの承認を得る。
 
+**骨子の起点に scaffold() を活用** (任意):
+
+依頼内容が以下のいずれかに合致する場合、`src.scaffold.scaffold(name)` でストーリー定型骨子を取得し、それをベースにユーザー要件で書き換える。骨子は validate を pass するため、編集後そのまま `generate_pptx` に渡せる。
+
+| テンプレート名 | 用途 | story_arc |
+|---|---|---|
+| `consulting_proposal` | コンサル提案書 | 現状分析 → 課題整理 → 解決策 → 期待効果 → 実行計画 |
+| `monthly_report` | 部門月次報告 | 総括KPI → トレンド → 進行案件 → 光と影 → 次月アクション |
+| `project_kickoff` | プロジェクトキックオフ | 背景と目的 → スコープ → 体制 → スケジュール → リスクと対応 |
+| `briefing` | 業界・社内ブリーフィング | エグゼサマリ → 業界トレンド → 事例 → 示唆と提言 |
+
+```python
+from src.scaffold import scaffold
+config = scaffold("monthly_report", theme="dark", brand_name="営業部",
+                  title="営業部 月次報告", client="経営会議向け", date="2026年5月")
+# config["slides"] のプレースホルダ ([XXX]) を実値に書き換えて generate_pptx へ
+```
+
+依頼が定型外（独自構成が必要）の場合は scaffold を使わず、レイアウト一覧から直接構成を組む。
+
+
 **構成設計の原則:**
 
 - **ストーリーライン重視**: 「状況 → 課題 → 原因 → 解決策 → 効果 → 実行計画」等の論理構造
@@ -277,5 +298,6 @@ print(f"生成完了: {output_path}")
 - コンポーネント: `src/components/`
 - テーマ: `src/themes/`
 - スキーマ定義: `src/schema.json`、検証ロジック: `src/validator.py`、linter: `src/linter.py`
+- ストーリーテンプレート: `src/scaffold.py` (`scaffold()` / `list_templates()` / `template_info()`)
 - **完成形サンプル**: `examples/` (consulting_proposal / monthly_report / agentic_ai_briefing)。新規依頼時は近い形のものを起点にする
 - 動作例 (全機能を網羅した26枚のサンプル): `tests/test_e2e.py` の `FULL_DECK_CONFIG`
