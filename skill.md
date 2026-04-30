@@ -136,7 +136,7 @@ print(f"生成完了: {output_path}")
 |---|---|---|---|
 | `bullets` | 箇条書き | `items: list[str]` | — |
 | `callout` | 左アクセントバー付き強調ボックス | `text: str` | `variant: "info"\|"success"\|"warning"\|"danger"`（バーと背景色に反映。デフォルトは `info` = primary色） |
-| `table` | 表 | `headers: list[str]`, `rows: list[list[str]]` | `highlight_rows: list[int]`（0始まり行インデックス）, `highlight_cells: [{row, col}]` |
+| `table` | 表 | `headers: list[str]`, `rows: list[list[str]]` | `highlight_rows: list[int]`, `highlight_cells: [{row, col}]`, `align: str\|list[str]`（"left"/"right"/"center"。未指定時は数値列を自動で右寄せ）, `banded: bool`（既定 true。ストライプ無効化は false）, `totals_row: bool\|list[str]`（true で数値列を自動合計し末尾に合計行を追加。明示指定も可）, `col_widths_ratio: list[float]`（列幅の相対比、例 [3,1,1]） |
 | `matrix_2x2` | 2x2マトリクス | `x_axis`, `y_axis`, `quadrants: list[4]` | `recommended_quadrant: 0-3`（太枠強調。0=左上, 1=右上, 2=左下, 3=右下） |
 | `pyramid` | ピラミッド | `levels: list[str\|{text,note}]` (上から順) | 各 level を `{"text": "...", "note": "右注釈"}` 形式にすると右側に注釈を表示 |
 | `process_flow` | プロセスフロー | `steps: list[str]` | `style: "arrow"(デフォ)\|"chevron"` |

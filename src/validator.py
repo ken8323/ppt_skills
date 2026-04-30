@@ -162,6 +162,41 @@ def _validate_component(comp: dict, path: str) -> None:
                     f"[{path}].values[{r}] の列数 ({len(row)}) が col_headers の長さ ({len(col_h)}) と一致しません。"
                 )
 
+    if comp_type == "table":
+        headers = comp.get("headers", [])
+        n_cols = len(headers)
+        align = comp.get("align")
+        if isinstance(align, list) and len(align) != n_cols:
+            raise ConfigValidationError(
+                f"[{path}] align の長さ ({len(align)}) が headers の列数 ({n_cols}) と一致しません。"
+            )
+        if isinstance(align, str) and align not in ("left", "right", "center"):
+            raise ConfigValidationError(
+                f"[{path}] align は 'left' / 'right' / 'center' のいずれかで指定してください。現在: '{align}'"
+            )
+        if isinstance(align, list):
+            for a in align:
+                if a not in ("left", "right", "center"):
+                    raise ConfigValidationError(
+                        f"[{path}] align に不正な値 '{a}'。'left'/'right'/'center' のみ。"
+                    )
+        col_widths_ratio = comp.get("col_widths_ratio")
+        if col_widths_ratio is not None:
+            if not isinstance(col_widths_ratio, list) or len(col_widths_ratio) != n_cols:
+                raise ConfigValidationError(
+                    f"[{path}] col_widths_ratio は列数 ({n_cols}) と同じ長さの数値配列で指定してください。"
+                )
+            for r in col_widths_ratio:
+                if not isinstance(r, (int, float)) or r <= 0:
+                    raise ConfigValidationError(
+                        f"[{path}] col_widths_ratio の要素は正の数値で指定してください。"
+                    )
+        totals_row = comp.get("totals_row")
+        if isinstance(totals_row, list) and len(totals_row) != n_cols:
+            raise ConfigValidationError(
+                f"[{path}] totals_row (list) の長さ ({len(totals_row)}) が列数 ({n_cols}) と一致しません。"
+            )
+
     if comp_type == "matrix_2x2":
         quads = comp.get("quadrants", [])
         if quads and len(quads) != 4:

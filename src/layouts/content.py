@@ -78,12 +78,19 @@ class ContentLayout:
             elif comp_type == "table":
                 headers = comp.get("headers", [])
                 rows = comp.get("rows", [])
+                totals_row = comp.get("totals_row")
+                has_totals = totals_row not in (None, False)
                 add_table(
                     slide, theme, headers, rows, left, current_top, width=width,
                     highlight_rows=comp.get("highlight_rows"),
                     highlight_cells=comp.get("highlight_cells"),
+                    align=comp.get("align"),
+                    banded=comp.get("banded", True),
+                    totals_row=totals_row,
+                    col_widths_ratio=comp.get("col_widths_ratio"),
                 )
-                current_top += Inches(0.4 * (len(rows) + 1)) + Inches(0.2)
+                total_rows = len(rows) + 1 + (1 if has_totals else 0)
+                current_top += Inches(0.4 * total_rows) + Inches(0.2)
 
             elif comp_type == "matrix_2x2":
                 label_reserve = Inches(0.5)  # x_label 0.4" + buffer
