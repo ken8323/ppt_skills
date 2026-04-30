@@ -74,7 +74,7 @@ def _validate_chart(chart: dict, path: str) -> None:
                 f"[{path}] labels の長さ ({len(labels)}) と values の長さ ({len(values)}) が一致しません。"
             )
 
-    if chart_type in ("bar", "line"):
+    if chart_type in ("bar", "line", "stacked_bar", "area"):
         if "series" not in data:
             raise ConfigValidationError(
                 f"[{path}] type='{chart_type}' には data.series が必要です。"
@@ -88,9 +88,51 @@ def _validate_chart(chart: dict, path: str) -> None:
                     f" labels の長さ ({len(labels)}) と一致しません。"
                 )
 
+    if chart_type == "scatter":
+        series = data.get("series", [])
+        if not series:
+            raise ConfigValidationError(
+                f"[{path}] type='scatter' には data.series が必要です。"
+            )
+        for k, s in enumerate(series):
+            pts = s.get("points")
+            if pts is None:
+                raise ConfigValidationError(
+                    f"[{path}].data.series[{k}] には points (XY ペア配列) が必要です。"
+                )
+            for p, pt in enumerate(pts):
+                if not (isinstance(pt, (list, tuple)) and len(pt) == 2):
+                    raise ConfigValidationError(
+                        f"[{path}].data.series[{k}].points[{p}] は [x, y] の2要素配列で指定してください。"
+                    )
+
+    if chart_type == "combo":
+        bars = data.get("bars", [])
+        lines = data.get("lines", [])
+        if not bars and not lines:
+            raise ConfigValidationError(
+                f"[{path}] type='combo' には data.bars または data.lines のいずれかが必要です。"
+            )
+        labels = data.get("labels", [])
+        if not labels:
+            raise ConfigValidationError(f"[{path}] type='combo' には data.labels が必要です。")
+        for group_key in ("bars", "lines"):
+            for k, s in enumerate(data.get(group_key, [])):
+                vals = s.get("values", [])
+                if len(vals) != len(labels):
+                    raise ConfigValidationError(
+                        f"[{path}].data.{group_key}[{k}] の values の長さ ({len(vals)}) が"
+                        f" labels の長さ ({len(labels)}) と一致しません。"
+                    )
+
     if chart_type in ("pie", "waterfall") and chart.get("annotations"):
         raise ConfigValidationError(
-            f"[{path}] annotations は bar / line でのみ使用できます。"
+            f"[{path}] annotations は bar / line / stacked_bar / area / combo でのみ使用できます。"
+        )
+
+    if chart_type == "scatter" and chart.get("annotations"):
+        raise ConfigValidationError(
+            f"[{path}] annotations は scatter では使用できません (XY軸でカテゴリ位置が定まらないため)。"
         )
 
 

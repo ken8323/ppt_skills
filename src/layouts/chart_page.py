@@ -1,7 +1,16 @@
 from pptx.util import Inches, Pt
 
 from src.components.text import add_title, add_bullets
-from src.components.chart import add_bar_chart, add_line_chart, add_pie_chart, add_waterfall
+from src.components.chart import (
+    add_bar_chart,
+    add_line_chart,
+    add_pie_chart,
+    add_waterfall,
+    add_stacked_bar_chart,
+    add_area_chart,
+    add_scatter_chart,
+    add_combo_chart,
+)
 from src.components._style import set_paragraph_text
 
 
@@ -10,6 +19,10 @@ CHART_FUNCTIONS = {
     "line": add_line_chart,
     "pie": add_pie_chart,
     "waterfall": add_waterfall,
+    "stacked_bar": add_stacked_bar_chart,
+    "area": add_area_chart,
+    "scatter": add_scatter_chart,
+    "combo": add_combo_chart,
 }
 
 
@@ -35,10 +48,19 @@ class ChartPageLayout:
         annotations = chart_data.get("annotations", [])
 
         extra_kwargs = {}
-        if unit and chart_type in ("bar", "line"):
+        if unit and chart_type in ("bar", "line", "stacked_bar", "area"):
             extra_kwargs["unit"] = unit
-        if annotations and chart_type in ("bar", "line"):
+        if annotations and chart_type in ("bar", "line", "stacked_bar", "area", "combo"):
             extra_kwargs["annotations"] = annotations
+        if chart_type == "stacked_bar" and chart_data.get("horizontal"):
+            extra_kwargs["horizontal"] = True
+        if chart_type == "area" and chart_data.get("stacked"):
+            extra_kwargs["stacked"] = True
+        if chart_type == "scatter":
+            if chart_data.get("x_label"):
+                extra_kwargs["x_label"] = chart_data["x_label"]
+            if chart_data.get("y_label"):
+                extra_kwargs["y_label"] = chart_data["y_label"]
 
         source_reserve = Inches(0.35) if source else 0
         available_height = theme.content_height - source_reserve

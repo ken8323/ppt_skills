@@ -45,14 +45,18 @@
       "type": "object",
       "required": ["type", "data"],
       "properties": {
-        "type": { "type": "string", "enum": ["bar", "line", "pie", "waterfall"] },
+        "type": { "type": "string", "enum": ["bar", "line", "pie", "waterfall", "stacked_bar", "area", "scatter", "combo"] },
         "unit": { "type": "string" },
         "annotations": { "type": "array" },
+        "horizontal": { "type": "boolean" },
+        "stacked": { "type": "boolean" },
+        "x_label": { "type": "string" },
+        "y_label": { "type": "string" },
         "data": { "type": "object" }
       },
       "allOf": [
         {
-          "if": { "properties": { "type": { "enum": ["bar", "line"] } } },
+          "if": { "properties": { "type": { "enum": ["bar", "line", "stacked_bar", "area"] } } },
           "then": {
             "properties": {
               "data": {

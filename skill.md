@@ -65,7 +65,12 @@ description: Use when the user asks to create a PowerPoint / pptx / スライド
 | 並列する3-5個の概念・原則 | `icon_row` |
 | 重要指標・成果数値 | `kpi_cards` |
 | Before/After・対比 | `comparison` レイアウト |
-| 数値の推移・比較 | `chart_page` (bar/line/pie/waterfall) |
+| 数値の推移・比較 | `chart_page` (bar/line/area) |
+| 構成比の時系列推移 | `chart_page` (stacked_bar/area stacked) |
+| 売上 + 成長率など 単位の異なる2指標 | `chart_page` (combo + secondary_axis) |
+| 2軸でのプロット (例: コスト×効果) | `chart_page` (scatter) |
+| 内訳・構成比の単一断面 | `chart_page` (pie) |
+| 増減の積み上げ可視化 | `chart_page` (waterfall) |
 | 構造化されたデータ | `table` |
 | 強調したい一文 | `callout` |
 | 戦略テーマ・3本柱 | `pillars` |
@@ -152,6 +157,10 @@ print(f"生成完了: {output_path}")
 |---|---|---|
 | `bar` | `{labels, series: [{name, values}]}` | `unit: str?`, `annotations: list?` |
 | `line` | `{labels, series: [{name, values}]}` | `unit: str?`, `annotations: list?` |
+| `stacked_bar` | `{labels, series: [{name, values}]}` (複数系列を積み上げ) | `unit: str?`, `horizontal: bool?`, `annotations: list?` |
+| `area` | `{labels, series: [{name, values}]}` | `unit: str?`, `stacked: bool?`, `annotations: list?` |
+| `scatter` | `{series: [{name, points: [[x, y], ...]}]}` (XY 散布) | `x_label: str?`, `y_label: str?` ※annotations 非対応 |
+| `combo` | `{labels, bars: [{name, values, unit?}], lines: [{name, values, unit?, secondary_axis?}]}` | `annotations: list?` ※`secondary_axis: true` で第2軸に切替 (右側) |
 | `pie` | `{labels, values}` | — |
 | `waterfall` | `{labels, values}` (符号で増減) | — ※正値は緑(success)、負値は赤(danger)、先頭・末尾のバーは primary で自動着色 |
 
