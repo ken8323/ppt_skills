@@ -1,0 +1,232 @@
+{
+  "$comment": "全社員向け AI 動向ブリーフィング (18枚)。colorful テーマ。出典は事例表/プレイヤー表に小さく差し込む。",
+  "theme": "colorful",
+  "brand_name": "AI Trend Report",
+  "slides": [
+    {
+      "layout": "cover",
+      "data": {
+        "title": "生成AI最新動向レポート 2026年4月版",
+        "subtitle": "「生成」から「実行（エージェント）」の時代へ",
+        "client": "全社員向け",
+        "date": "2026年4月"
+      }
+    },
+    {
+      "layout": "agenda",
+      "data": {
+        "items": [
+          "エグゼクティブ・サマリー",
+          "主要プレイヤーの最新アップデート",
+          "最重要キーワード: Agentic AI",
+          "国内企業の高度な活用事例",
+          "インフラ制約とガバナンス",
+          "自社が取るべきアクション"
+        ]
+      }
+    },
+    {
+      "layout": "section_divider",
+      "data": {"section_number": 1, "section_title": "エグゼクティブ・サマリー"}
+    },
+    {
+      "layout": "content",
+      "data": {
+        "title": "AIは「回答」から「自律実行」への転換期",
+        "subtitle": "技術進化・エージェント化・業務組込・ガバナンスの4潮流が同時進行",
+        "columns": 1,
+        "components": [
+          {
+            "type": "pillars",
+            "items": [
+              {"title": "技術の進化", "body": "GPT-5.4 / Gemini 3.1 Pro / Claude 4.7。100万トークン超のコンテキストと高度な推論が標準化。"},
+              {"title": "AIエージェント本格普及", "body": "回答するだけでなく、調査・実行・検証まで自律完結する「動くAI」が業務現場に浸透。"},
+              {"title": "業務ワークフロー組込", "body": "国内企業は単発のチャット利用から脱却し、RAGの高度化と独自エージェント開発へ。"},
+              {"title": "ガバナンス整備", "body": "EU AI Actの実装、計算資源の確保、CAIO設置が経営課題に。"}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "layout": "section_divider",
+      "data": {"section_number": 2, "section_title": "主要プレイヤーの最新アップデート"}
+    },
+    {
+      "layout": "content",
+      "data": {
+        "title": "三大プレイヤーが推論能力を一段押し上げ",
+        "subtitle": "2026年Q1-Q2にかけて主要モデルが相次ぎ世代交代",
+        "columns": 1,
+        "components": [
+          {
+            "type": "table",
+            "headers": ["企業", "最新モデル", "リリース", "主要トピック"],
+            "rows": [
+              ["OpenAI", "GPT-5.4", "2026年3月", "44種の専門職ベンチで高スコア、ホワイトカラー代替が加速"],
+              ["Google", "Gemini 3.1 Pro", "2026年Q1", "ARC-AGI-2で前世代比2.5倍、Workspace深統合で先回り助手化"],
+              ["Anthropic", "Claude 4.7 Opus / Mythos", "2026年Q1-Q2", "コーディング世界最高評価、Googleから最大400億ドル出資"]
+            ]
+          },
+          {"type": "bullets", "items": ["出典: Google Blog「Gemini 3 による知性の新時代」/ Anthropic「Introducing Claude 4」"]}
+        ]
+      }
+    },
+    {
+      "layout": "content",
+      "data": {
+        "title": "各社の差別化軸が明確化",
+        "subtitle": "推論・統合・コーディングで棲み分けが進む",
+        "columns": 1,
+        "components": [
+          {
+            "type": "pillars",
+            "items": [
+              {"title": "GPT-5.4", "body": "月次アップデートで推論能力が劇的進化。専門職ベンチで高スコア。", "kpi": "44職種"},
+              {"title": "Gemini 3.1 Pro", "body": "ARC-AGI-2で大幅向上。Docs/SlidesでProactive Helperへ。", "kpi": "2.5倍"},
+              {"title": "Claude 4.7 Opus", "body": "コーディング世界最高評価。Mythosでセキュリティ解析特化。", "kpi": "$40B出資"}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "layout": "section_divider",
+      "data": {"section_number": 3, "section_title": "最重要キーワード: Agentic AI"}
+    },
+    {
+      "layout": "comparison",
+      "data": {
+        "title": "「答えるAI」から「動くAI」へ",
+        "subtitle": "人間が指示する時代から、AIが目標を理解し自律実行する時代へ",
+        "left_title": "従来: 生成AI",
+        "left_components": [
+          {"type": "bullets", "items": ["人間が指示を出す", "AIはテキスト・画像を生成", "実行・検証は人間の役割", "単発タスクが中心"]},
+          {"type": "callout", "text": "AIは「道具」", "variant": "info"}
+        ],
+        "right_title": "現在: Agentic AI",
+        "right_components": [
+          {"type": "bullets", "items": ["AIが目標を理解", "自らツールを使い他部署と連携", "実行・検証まで一気通貫", "業務プロセス全体を完結"]},
+          {"type": "callout", "text": "AIは「実行者」", "variant": "success"}
+        ]
+      }
+    },
+    {
+      "layout": "content",
+      "data": {
+        "title": "エージェント化で職務の終端まで自動化",
+        "subtitle": "プログラミング・CSなど業務終端のアクションまでAIが担う",
+        "columns": 1,
+        "components": [
+          {
+            "type": "icon_row",
+            "items": [
+              {"icon": "code", "label": "プログラミング\nコード作成→テスト→PR作成"},
+              {"icon": "user", "label": "カスタマーサクセス\n履歴分析→提案→フォロー"},
+              {"icon": "chart", "label": "分析・レポーティング\n収集→可視化→示唆"},
+              {"icon": "doc", "label": "事務・稟議\nドラフト→照会→承認依頼"}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "layout": "section_divider",
+      "data": {"section_number": 4, "section_title": "国内企業の高度な活用事例"}
+    },
+    {
+      "layout": "content",
+      "data": {
+        "title": "大企業が「全社展開」フェーズに突入",
+        "subtitle": "PoCを越え、業務基幹プロセスへの組込が進行",
+        "columns": 1,
+        "components": [
+          {
+            "type": "table",
+            "headers": ["企業", "取組内容", "成果"],
+            "rows": [
+              ["パナソニックコネクト", "独自AI「ConnectAI」を全社展開", "年間44.8万時間の業務削減"],
+              ["三菱UFJ銀行", "RAG検索＋融資稟議書ドラフト自動生成", "稟議書ドラフトを実用化"],
+              ["トヨタ自動車", "工場での外観検査にAI導入", "見落とし率ゼロを達成"],
+              ["イオンリテール", "Gemini Extract Systemで商品情報登録", "4,500人時/年 → 450人時/年（90%削減）"]
+            ],
+            "highlight_rows": [0, 3]
+          },
+          {"type": "bullets", "items": ["出典: cloud.watch.impress.co.jp / ai-literacy.jp / intel.co.jp / uravation.com"]}
+        ]
+      }
+    },
+    {
+      "layout": "content",
+      "data": {
+        "title": "効果は時間・精度の両面で桁違い",
+        "subtitle": "業務時間削減と品質向上を同時に実現",
+        "columns": 1,
+        "components": [
+          {
+            "type": "kpi_cards",
+            "cards": [
+              {"value": "44.8", "unit": "万時間", "label": "年間削減（パナソニックコネクト）", "delta": "全社展開", "delta_direction": "up"},
+              {"value": "90", "unit": "%", "label": "工数削減（イオンリテール）", "delta": "-4,050人時", "delta_direction": "up"},
+              {"value": "0", "unit": "%", "label": "見落とし率（トヨタ外観検査）", "delta": "完全自動化", "delta_direction": "up"}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "layout": "section_divider",
+      "data": {"section_number": 5, "section_title": "インフラ制約とガバナンス"}
+    },
+    {
+      "layout": "comparison",
+      "data": {
+        "title": "スケール拡大は電力と規制の制約に直面",
+        "subtitle": "ハード面のボトルネックと、ソフト面の説明責任が同時に問われる",
+        "left_title": "インフラ制約",
+        "left_components": [
+          {"type": "bullets", "items": ["電力消費が国家レベル", "GPU・専用チップの逼迫", "効率重視モデルへ需要", "オンプレ型SLM が台頭"]},
+          {"type": "callout", "text": "「電力とチップ」が成長の壁", "variant": "warning"}
+        ],
+        "right_title": "ガバナンス",
+        "right_components": [
+          {"type": "bullets", "items": ["EU AI Actが2026年施行", "透明性・説明責任が必須", "AI倫理委員会の設置一般化", "CAIO設置が進む"]},
+          {"type": "callout", "text": "ガバナンスは経営アジェンダ", "variant": "danger"}
+        ]
+      }
+    },
+    {
+      "layout": "section_divider",
+      "data": {"section_number": 6, "section_title": "自社が取るべきアクション"}
+    },
+    {
+      "layout": "content",
+      "data": {
+        "title": "4つの打ち手で「使うAI」から「動かすAI」へ",
+        "subtitle": "段階的に組織能力を積み上げ、Agentic AI時代に備える",
+        "columns": 1,
+        "components": [
+          {
+            "type": "process_flow",
+            "steps": ["AIエージェント試験導入", "社内ナレッジ再整備", "職能AI×リスキリング", "リスク管理体制強化"]
+          }
+        ]
+      }
+    },
+    {
+      "layout": "closing",
+      "data": {
+        "summary": [
+          "2026年は「生成」から「自律実行」への分水嶺",
+          "国内大企業はPoCを越え数十万時間規模の削減を実現",
+          "インフラ制約とガバナンス対応が経営必須アジェンダに"
+        ],
+        "next_steps": [
+          "今四半期内にエージェント試験導入の対象業務を選定",
+          "全社ナレッジ整備プロジェクトを起動",
+          "AI倫理・リスク管理体制（CAIO含む）の整備に着手"
+        ]
+      }
+    }
+  ]
+}

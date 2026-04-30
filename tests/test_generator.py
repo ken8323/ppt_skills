@@ -93,20 +93,32 @@ def test_generate_unknown_layout_raises(tmp_path):
         "theme": "monotone",
         "slides": [{"layout": "nonexistent", "data": {}}],
     }
-    with pytest.raises(ValueError, match="Unknown layout"):
+    # validator が先に未知レイアウトを検出する
+    with pytest.raises(ValueError, match="nonexistent"):
         generate_pptx(config, str(tmp_path / "err.pptx"))
 
 
+def test_generate_unknown_layout_without_validate_raises_from_dispatch(tmp_path):
+    config = {
+        "theme": "monotone",
+        "slides": [{"layout": "nonexistent", "data": {}}],
+    }
+    with pytest.raises(ValueError, match="Unknown layout"):
+        generate_pptx(config, str(tmp_path / "err.pptx"), validate=False)
+
+
 def test_generate_empty_slides(tmp_path):
+    # validator は minItems:1 を要求するため validate=False で実行
     config = {"theme": "monotone", "slides": []}
     output = tmp_path / "empty.pptx"
-    prs = generate_pptx(config, str(output))
+    prs = generate_pptx(config, str(output), validate=False)
     assert output.exists()
     assert len(prs.slides) == 0
 
 
 def test_generate_default_theme(tmp_path):
+    # theme は必須化されたため、validate=False で旧挙動を確認
     config = {"slides": [{"layout": "cover", "data": {"title": "T"}}]}
     output = tmp_path / "default.pptx"
-    prs = generate_pptx(config, str(output))
+    prs = generate_pptx(config, str(output), validate=False)
     assert output.exists()

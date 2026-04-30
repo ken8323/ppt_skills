@@ -260,7 +260,10 @@ print(f"生成完了: {output_path}")
 ## 実装参照
 
 - エントリーポイント: `src/generator.py` の `generate_pptx(config, output_path)`
+  - 既定で schema 検証 + linter (オーバーフロー警告) を実行。`validate=False` / `lint=False` で個別に無効化可能
 - レイアウト: `src/layouts/`
 - コンポーネント: `src/components/`
 - テーマ: `src/themes/`
+- スキーマ定義: `src/schema.json`、検証ロジック: `src/validator.py`、linter: `src/linter.py`
+- **完成形サンプル**: `examples/` (consulting_proposal / monthly_report / agentic_ai_briefing)。新規依頼時は近い形のものを起点にする
 - 動作例 (全機能を網羅した26枚のサンプル): `tests/test_e2e.py` の `FULL_DECK_CONFIG`

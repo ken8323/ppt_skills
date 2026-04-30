@@ -1,0 +1,154 @@
+{
+  "$comment": "コンサル提案書サンプル (12枚)。monotone テーマ。状況→課題→解決策→効果→計画のストーリーライン。",
+  "theme": "monotone",
+  "footer": "ABC Consulting | Confidential",
+  "brand_name": "ABC Consulting",
+  "slides": [
+    {
+      "layout": "cover",
+      "data": {
+        "title": "DX推進戦略提案書",
+        "subtitle": "2026年度 全社デジタル変革ロードマップ",
+        "client": "株式会社XYZ",
+        "date": "2026年4月"
+      }
+    },
+    {
+      "layout": "agenda",
+      "data": {
+        "items": ["現状分析", "課題整理", "解決策の提案", "期待効果", "実行計画"],
+        "highlight": 2
+      }
+    },
+    {
+      "layout": "section_divider",
+      "data": {"section_number": 1, "section_title": "現状分析"}
+    },
+    {
+      "layout": "chart_page",
+      "data": {
+        "title": "売上は3年で2.2倍に成長",
+        "subtitle": "北米市場の拡大が牽引、CAGR 48% を達成",
+        "chart": {
+          "type": "bar",
+          "unit": "億円",
+          "data": {
+            "labels": ["2023", "2024", "2025"],
+            "series": [{"name": "売上", "values": [100, 150, 220]}]
+          },
+          "annotations": [{"category": "2025", "text": "CAGR 48%"}]
+        },
+        "key_points": ["北米市場が牽引", "2025年は前年比+47%", "国内は横ばい"],
+        "source": "社内財務データ (2026年3月時点)"
+      }
+    },
+    {
+      "layout": "section_divider",
+      "data": {"section_number": 2, "section_title": "課題整理"}
+    },
+    {
+      "layout": "content",
+      "data": {
+        "title": "レガシーシステム刷新が最優先課題",
+        "subtitle": "顧客接点・業務効率・人材育成の3面で構造的ボトルネック",
+        "columns": 1,
+        "components": [
+          {
+            "type": "matrix_2x2",
+            "x_axis": "影響度",
+            "y_axis": "緊急度",
+            "quadrants": [
+              "人材育成プログラム整備",
+              "レガシーERP刷新",
+              "ペーパーレス推進",
+              "顧客データ統合基盤"
+            ],
+            "recommended_quadrant": 1
+          }
+        ]
+      }
+    },
+    {
+      "layout": "section_divider",
+      "data": {"section_number": 3, "section_title": "解決策の提案"}
+    },
+    {
+      "layout": "content",
+      "data": {
+        "title": "3本柱で全社DXを段階推進",
+        "subtitle": "基盤・業務・人材の3軸を並列で立ち上げ",
+        "columns": 1,
+        "components": [
+          {
+            "type": "pillars",
+            "items": [
+              {"title": "データ基盤統合", "body": "顧客・販売・在庫データを統合DWHで一元化", "kpi": "FY26 Q2"},
+              {"title": "AIエージェント導入", "body": "営業・経理業務にエージェント型AIを適用", "kpi": "FY26 Q3"},
+              {"title": "人材リスキリング", "body": "全社員向けAIリテラシー研修を実施", "kpi": "FY26内"}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "layout": "section_divider",
+      "data": {"section_number": 4, "section_title": "期待効果"}
+    },
+    {
+      "layout": "content",
+      "data": {
+        "title": "年間コスト削減 12 億円・売上機会 +30 億円",
+        "subtitle": "投資回収は2年、3年累計 ROI 280%",
+        "columns": 1,
+        "components": [
+          {
+            "type": "kpi_cards",
+            "cards": [
+              {"value": "12", "unit": "億円", "label": "年間コスト削減", "delta": "-15%", "delta_direction": "up"},
+              {"value": "30", "unit": "億円", "label": "新規売上機会", "delta": "+14%", "delta_direction": "up"},
+              {"value": "280", "unit": "%", "label": "3年累計 ROI", "delta": "回収2年", "delta_direction": "up"}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "layout": "section_divider",
+      "data": {"section_number": 5, "section_title": "実行計画"}
+    },
+    {
+      "layout": "content",
+      "data": {
+        "title": "2026年度内に全3本柱を本番稼働",
+        "subtitle": "Q1キックオフ〜Q4本番展開の段階的ロールアウト",
+        "columns": 1,
+        "components": [
+          {
+            "type": "gantt",
+            "phases": ["Q1", "Q2", "Q3", "Q4"],
+            "tasks": [
+              {"name": "データ基盤統合", "start": 0, "duration": 2, "progress": 0.0},
+              {"name": "AIエージェント導入", "start": 1, "duration": 2, "progress": 0.0},
+              {"name": "人材リスキリング", "start": 0, "duration": 4, "progress": 0.0}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "layout": "closing",
+      "data": {
+        "summary": [
+          "DXは経営の最優先アジェンダ",
+          "3本柱（基盤・業務・人材）の並列推進が必須",
+          "FY26内に投資回収軌道へ"
+        ],
+        "next_steps": [
+          "5月: キックオフミーティング",
+          "6月: 詳細要件定義開始",
+          "7月: 基盤PoC着手"
+        ]
+      }
+    }
+  ]
+}

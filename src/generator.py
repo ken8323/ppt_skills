@@ -5,6 +5,7 @@ from src.themes import get_theme
 from src.layouts import get_layout
 from src.components.footer import add_page_footer
 from src.validator import validate_config
+from src.linter import lint_config
 
 
 BLANK_LAYOUT_INDEX = 6
@@ -21,7 +22,14 @@ def _should_skip_footer(layout_name: str, data: dict) -> bool:
     return False
 
 
-def generate_pptx(config: dict, output_path: str, strict: bool = False) -> Presentation:
+def generate_pptx(
+    config: dict,
+    output_path: str,
+    *,
+    validate: bool = True,
+    lint: bool = True,
+    strict: bool = None,
+) -> Presentation:
     """設定辞書からpptxを生成してファイル保存。
 
     config 構造:
@@ -34,9 +42,28 @@ def generate_pptx(config: dict, output_path: str, strict: bool = False) -> Prese
                 ...
             ],
         }
+
+    Args:
+        validate: True で schema.json + ビジネスルール検証を実行 (既定 True)。
+                  検証失敗時は ConfigValidationError を送出し pptx は生成しない。
+        lint:     True で警告レベルの静的チェック (オーバーフロー等) を実行し
+                  stderr に警告を出力 (既定 True)。生成は継続。
+        strict:   後方互換用。指定時は validate に同期する (deprecated)。
     """
-    if strict:
+    # 後方互換: strict=True/False が渡された場合は validate に反映
+    if strict is not None:
+        validate = strict
+
+    if validate:
         validate_config(config)
+
+    if lint:
+        warnings = lint_config(config)
+        if warnings:
+            import sys
+            print("[ppt_skills] Lint warnings:", file=sys.stderr)
+            for w in warnings:
+                print(f"  - {w}", file=sys.stderr)
 
     theme_name = config.get("theme", "monotone")
     theme = get_theme(theme_name)

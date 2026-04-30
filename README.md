@@ -11,7 +11,8 @@
 - **4 種のチャート**: 棒・折れ線・円・ウォーターフォール（ウォーターフォールは正/負値で自動配色、棒/折れ線は注記ピル対応）
 - **アクションタイトル前提**: タイトル直下に根拠や数値を補足する `subtitle`（サブヘッド）を全主要レイアウトで対応
 - **フッター/ページ番号自動注入**: トップレベル `footer` / `brand_name` を一度指定すれば全スライドに反映
-- **スキーマ検証**: `src/schema.json` + `src/validator.py` で構成 JSON を事前バリデート
+- **スキーマ検証 + Linter**: `generate_pptx` が既定で構成 JSON を schema 検証し、推奨範囲を超えた要素（タイトル超過・bullets過多・KPI delta整合・chart_page の出典不足など）を警告
+- **Examples ギャラリー**: `examples/` に提案書・月次報告・業界動向ブリーフィングの完成形 JSON を同梱、新規依頼の起点として再利用可能
 
 ## ディレクトリ構成
 
@@ -25,8 +26,11 @@ ppt_skills/
 │   ├── layouts/            # cover / agenda / content / chart_page / comparison / section_divider / closing
 │   ├── components/         # bullets, callout, table, kpi_cards, pyramid, process_flow, ...
 │   └── themes/             # monotone / dark / colorful
+├── examples/               # 完成形 JSON のギャラリー (提案書 / 月次報告 / AI動向ブリーフィング)
 ├── tests/
 │   ├── test_e2e.py         # 全機能を網羅した 26 枚サンプルデッキの生成テスト
+│   ├── test_examples.py    # examples/ 配下を自動 validate + generate
+│   ├── test_linter.py
 │   ├── test_new_features.py
 │   └── test_validator.py
 └── requirements.txt
