@@ -24,7 +24,8 @@
           "type": "string",
           "enum": ["cover", "section_divider", "agenda", "content", "chart_page", "comparison", "closing"]
         },
-        "data": { "type": "object" }
+        "data": { "type": "object" },
+        "notes": { "type": "string" }
       }
     },
     "component": {

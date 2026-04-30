@@ -108,8 +108,6 @@ config = scaffold("monthly_report", theme="dark", brand_name="営業部",
 承認後、Pythonコードを実行して.pptxを生成する:
 
 ```python
-import sys
-sys.path.insert(0, "/Users/kenichi/Desktop/project/ppt_skills")
 from src.generator import generate_pptx
 
 config = { ... }  # 構成JSON (下記リファレンス参照)
@@ -130,11 +128,13 @@ print(f"生成完了: {output_path}")
   "theme": "monotone" | "dark" | "colorful",
   "footer": "株式会社ABC | 社外秘",       // 任意。各ページ左下に表示
   "brand_name": "ABC Consulting",          // 任意。footer 未指定時のフォールバック
-  "slides": [ { "layout": "...", "data": { ... } }, ... ]
+  "slides": [ { "layout": "...", "data": { ... }, "notes": "話者メモ (任意)" }, ... ]
 }
 ```
 
 各スライドは `{"layout": "<レイアウト名>", "data": {<レイアウト固有データ>}}` の形。ページ番号は各スライド右下に自動挿入される (cover/section_divider/thank_you を除く)。
+
+**スピーカーノート**: スライドオブジェクトの `"notes"` キーに文字列を指定すると PowerPoint のノートペインに書き込まれる。改行 `\n` も反映される。プレゼンター向け補足・出典・想定 Q&A の記載に活用する。
 
 ### レイアウト一覧
 
@@ -168,7 +168,7 @@ print(f"生成完了: {output_path}")
 | `org_chart` | 組織図 | `data: {name, children: [{name, children}]}` | — |
 | `timeline` | タイムライン | `milestones: [{date, label}]` | `today: str`（日付文字列。マイルストーンと同じ形式で指定すると「現在」マーカーを表示） |
 | `gantt` | ガント | `tasks: [{name, start, duration}]`, `phases: list[str]` | 各 task に `progress: 0.0-1.0`（完了比率バーを濃色で表示） |
-| `icon_row` | アイコン行 | `items: [{icon, label}]` | — |
+| `icon_row` | アイコン行 | `items: [{icon, label}]` | 各 item に `symbol: str` で表示グリフを上書き可。利用可能アイコンは 60+ (geometry/業務系/矢印)。一覧は `src.components.icon.list_icons()`。未定義 icon は OVAL にフォールバックし lint 警告 |
 | `kpi_cards` | KPIカード | `cards: [{value, unit, label}]` | 各 card に `delta: str`, `delta_direction: "up"\|"down"\|"flat"` |
 | `pillars` | 縦柱（3-5本） | `items: [{title, body}]` | 各 item に `kpi: str`（大きな数値を柱下部に表示） |
 | `swot` | SWOTフレームワーク | `cells: [{title, items: list[str]}]`（左上/右上/左下/右下の順） | — |
@@ -288,7 +288,12 @@ print(f"生成完了: {output_path}")
 - **matrix_2x2** の `quadrants` は左上/右上/左下/右下の順で4要素
 - **pyramid** の `levels` は上 (狭い) から下 (広い) の順
 - **waterfall** のバー配色は自動（正値=緑、負値=赤、先頭末尾=primary）。JSONでの指定不要
-- 実行ファイルが存在しない環境では `pip install -r requirements.txt` を事前実行
+- 初回セットアップ: プロジェクトルートで `pip install -e .` を実行 (venv 推奨)
+- CLI コマンド:
+  - `ppt-skills generate config.json output.pptx` — PPTX 生成
+  - `ppt-skills scaffold consulting_proposal > config.json` — テンプレート出力
+  - `ppt-skills list-icons` — アイコン一覧
+  - `ppt-skills thumbnail output.pptx ./thumbs/` — 各スライドを PNG に変換 (LibreOffice / macOS qlmanage / Pillow のいずれかが必要)
 
 ## 実装参照
 
@@ -299,5 +304,7 @@ print(f"生成完了: {output_path}")
 - テーマ: `src/themes/`
 - スキーマ定義: `src/schema.json`、検証ロジック: `src/validator.py`、linter: `src/linter.py`
 - ストーリーテンプレート: `src/scaffold.py` (`scaffold()` / `list_templates()` / `template_info()`)
+- サムネイル生成: `src/thumbnail.py` (`generate_thumbnails(pptx_path, output_dir)`)
+- CLI エントリポイント: `src/cli.py` (`ppt-skills` コマンド)
 - **完成形サンプル**: `examples/` (consulting_proposal / monthly_report / agentic_ai_briefing)。新規依頼時は近い形のものを起点にする
 - 動作例 (全機能を網羅した26枚のサンプル): `tests/test_e2e.py` の `FULL_DECK_CONFIG`

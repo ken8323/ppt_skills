@@ -100,5 +100,11 @@ def generate_pptx(
         if not _should_skip_footer(layout_name, data):
             add_page_footer(slide, theme, idx, total, footer_text=footer_text)
 
+        notes_text = slide_cfg.get("notes", "")
+        if notes_text:
+            notes_slide = slide.notes_slide
+            tf = notes_slide.notes_text_frame
+            tf.text = notes_text
+
     prs.save(output_path)
     return prs

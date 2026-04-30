@@ -1,5 +1,12 @@
 import pytest
 from pptx import Presentation
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--update-golden", action="store_true", default=False,
+        help="ビジュアルリグレッションのゴールデン PNG を更新する",
+    )
 from pptx.util import Inches
 
 from src.themes.monotone import MonotoneTheme
